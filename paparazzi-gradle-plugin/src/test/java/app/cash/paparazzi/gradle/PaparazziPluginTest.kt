@@ -501,7 +501,7 @@ class PaparazziPluginTest {
     val resourceFileContents = resourcesFile.readLines()
     assertThat(resourceFileContents[0]).isEqualTo("app.cash.paparazzi.plugin.test")
     assertThat(resourceFileContents[1]).isEqualTo("build/intermediates/res/merged/debug")
-    assertThat(resourceFileContents[4]).isEqualTo("build/intermediates/library_assets/debug/out")
+    assertThat(resourceFileContents[4]).isEqualTo("build/intermediates/merged_assets/debug/out")
     assertThat(resourceFileContents[6]).isEqualTo("app.cash.paparazzi.plugin.test")
   }
 
@@ -521,7 +521,7 @@ class PaparazziPluginTest {
     val resourceFileContents = resourcesFile.readLines()
     assertThat(resourceFileContents[0]).isEqualTo("app.cash.paparazzi.plugin.test")
     assertThat(resourceFileContents[1]).isEqualTo("build/intermediates/res/merged/debug")
-    assertThat(resourceFileContents[4]).isEqualTo("build/intermediates/library_assets/debug/out")
+    assertThat(resourceFileContents[4]).isEqualTo("build/intermediates/merged_assets/debug/out")
     assertThat(resourceFileContents[6]).isEqualTo("app.cash.paparazzi.plugin.test")
   }
 
@@ -779,6 +779,16 @@ class PaparazziPluginTest {
     val snapshotImage = snapshots[0]
     val goldenImage = File(moduleRoot, "src/test/resources/five_bucks.png")
     assertThat(snapshotImage).isSimilarTo(goldenImage).withDefaultThreshold()
+  }
+
+  @Test
+  fun openTransitiveAssets() {
+    val fixtureRoot = File("src/test/projects/open-transitive-assets")
+    val moduleRoot = File(fixtureRoot, "module")
+
+    gradleRunner
+      .withArguments("module:testDebug", "--stacktrace")
+      .runFixture(fixtureRoot, moduleRoot) { build() }
   }
 
   private fun GradleRunner.runFixture(
